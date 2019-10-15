@@ -9,10 +9,12 @@ import com.loader.core.QueueLoaderBuilder
 import com.loader.interfaces.ICameraLoaderListener
 import com.loader.interfaces.IRequestLoadedListener
 import com.loader.request.CustomRequest
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.json.JSONObject
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.resume
 
-class Jumpy() {
+class Jumpy {
     interface JumpyListener {
         fun exception(exception: Exception)
 
@@ -45,6 +47,24 @@ class Jumpy() {
         Log.d("Jumpy", "add object " + T::class.java)
         obj.setParcelableObject(T::class.java)
         requests.add(obj)
+    }
+
+    suspend fun load(): Map<String, Any?>? {
+        return suspendCancellableCoroutine {
+            load(object : JumpyListener {
+                override fun exception(exception: Exception) {
+                    if (it.isActive) {
+                        it.resume(null)
+                    }
+                }
+
+                override fun loaded(resultObjects: MutableMap<String, Any?>) {
+                    if (it.isActive) {
+                        it.resume(resultObjects.toMap())
+                    }
+                }
+            })
+        }
     }
 
     fun load(doneListener: JumpyListener) {
