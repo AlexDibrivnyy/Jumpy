@@ -11,14 +11,6 @@ import proguard.annotation.KeepClassMembers;
 
 public interface NetworkInterface {
 
-    @Keep
-    @KeepClassMembers
-    public class SyncResponse {
-        public String response;
-
-        public boolean successful;
-    }
-
     interface Response {
         void onSuccess(String s);
 

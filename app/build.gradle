@@ -12,18 +12,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        debug {
-            minifyEnabled false
-        }
 
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules.pro',
-                    'proguard-okhttp3.pro'
-        }
+        consumerProguardFiles 'proguard-okhttp3.pro'
     }
 }
 
