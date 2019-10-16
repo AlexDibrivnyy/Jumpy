@@ -93,6 +93,15 @@ class Jumpy {
                                         request.url
                                     }
 
+                                    var errorMessage = ""
+                                    try {
+                                        resultObjects[key] = request.parse(s)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        resultObjects[key] = null
+                                        errorMessage = e.message ?: "Unknown parsing error"
+                                    }
+
                                     statsRetryCounter.set(0)
                                     listener.onFinish()
                                 }
