@@ -6,9 +6,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import proguard.annotation.Keep;
-import proguard.annotation.KeepClassMembers;
-
 public interface NetworkInterface {
 
     interface Response {
@@ -25,7 +22,7 @@ public interface NetworkInterface {
 
     void getHeader(String link, String headerKey, Response response);
 
-    void post(String link, String token, JSONObject jsonObject, Response response);
+    void post(String link,  JSONObject jsonObject, Map<String, String> headers, Response response);
 
     void post(String link, Map<String, String> headers, Map<String, String> map, Response responseInterface);
 

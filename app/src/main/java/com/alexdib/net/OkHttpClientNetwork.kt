@@ -37,7 +37,7 @@ class OkHttpClientNetwork : NetworkInterface {
                 }
 
                 @Throws(IOException::class)
-                override fun onResponse(call: Call, response: okhttp3.Response) {
+                override fun onResponse(call: Call, response: Response) {
                     handleResponse(response, responseInterface)
                 }
             })
@@ -65,7 +65,7 @@ class OkHttpClientNetwork : NetworkInterface {
             }
 
             @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 handleResponse(response, responseInterface)
             }
         })
@@ -91,7 +91,7 @@ class OkHttpClientNetwork : NetworkInterface {
             }
 
             @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 handleResponse(response, responseInterface)
             }
         })
@@ -111,7 +111,7 @@ class OkHttpClientNetwork : NetworkInterface {
             }
 
             @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 try {
                     val responseBody = response.header(headerKey, "")
                     AsyncJob.doOnMainThread { responseInterface.onSuccess(responseBody) }
@@ -124,18 +124,15 @@ class OkHttpClientNetwork : NetworkInterface {
     }
 
     override fun post(
-        link: String,
-        token: String?,
-        jsonObject: JSONObject,
+        link: String, jsonObject: JSONObject, headers: Map<String, String>,
         responseInterface: NetworkInterface.Response
     ) {
-
         val body = RequestBody.create(JSON, jsonObject.toString())
         val builder = Request.Builder()
             .url(link)
-            .header("Content-Type", "application/json")
-        if (token != null) {
-            builder.addHeader("Authorization", "Token $token")
+
+        headers.forEach {
+            builder.addHeader(it.key, it.value)
         }
 
         val request = builder.post(body).build()
@@ -147,7 +144,7 @@ class OkHttpClientNetwork : NetworkInterface {
             }
 
             @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 handleResponse(response, responseInterface)
             }
         })
@@ -183,7 +180,7 @@ class OkHttpClientNetwork : NetworkInterface {
             }
 
             @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 handleResponse(response, responseInterface)
             }
         })
@@ -212,7 +209,7 @@ class OkHttpClientNetwork : NetworkInterface {
                 AsyncJob.doOnMainThread { responseInterface.onError(e) }
             }
 
-            override fun onResponse(call: Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 handleResponse(response, responseInterface)
             }
         })
@@ -247,13 +244,13 @@ class OkHttpClientNetwork : NetworkInterface {
                 AsyncJob.doOnMainThread { responseInterface.onError(e) }
             }
 
-            override fun onResponse(call: Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 handleResponse(response, responseInterface)
             }
         })
     }
 
-    fun handleResponse(response: okhttp3.Response, responseInterface: NetworkInterface.Response) {
+    fun handleResponse(response: Response, responseInterface: NetworkInterface.Response) {
         if (response.isSuccessful) {
             try {
                 val responseBody = response.body()!!.string()

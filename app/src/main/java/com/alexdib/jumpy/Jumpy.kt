@@ -129,6 +129,7 @@ class Jumpy {
                             RestType.POST_JSON -> RequestHelper.post(
                                 request.url,
                                 JSONObject(request.params),
+                                request.headers,
                                 reqestListener
                             )
                         }
