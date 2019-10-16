@@ -39,14 +39,23 @@ class Jumpy {
         fun <T> setParcelableObject(java: Class<T>) {
             classType = java
         }
+
+        fun getTag(): String {
+            return if (params.isNotEmpty()) {
+                url + params.toString()
+            } else {
+                url
+            }
+        }
     }
 
     val requests = mutableListOf<ObjectRequest<*>>()
 
-    inline fun <reified T : Any> add(obj: ObjectRequest<T>) {
+    inline fun <reified T : Any> add(obj: ObjectRequest<T>): String {
         Log.d("Jumpy", "add object " + T::class.java)
         obj.setParcelableObject(T::class.java)
         requests.add(obj)
+        return obj.getTag()
     }
 
     suspend fun load(): Map<String, Any?>? {
@@ -66,6 +75,7 @@ class Jumpy {
             })
         }
     }
+
 
     fun load(doneListener: JumpyListener) {
         if (requests.isEmpty()) {
@@ -87,11 +97,7 @@ class Jumpy {
                             override fun onSuccess(s: String) {
 
                                 AsyncJob.doInBackground {
-                                    val key = if (request.params.isNotEmpty()) {
-                                        request.url + request.params.toString()
-                                    } else {
-                                        request.url
-                                    }
+                                    val key = request.getTag()
 
                                     var errorMessage = ""
                                     try {
